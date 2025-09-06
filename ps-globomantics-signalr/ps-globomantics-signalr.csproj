@@ -7,4 +7,8 @@
     <RootNamespace>ps_globomantics_signalr</RootNamespace>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\lib\js\" />
+  </ItemGroup>
+
 </Project>
