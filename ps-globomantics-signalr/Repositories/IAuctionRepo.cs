@@ -6,5 +6,7 @@ namespace ps_globomantics_signalr.Repositories
     {
         IEnumerable<Auction> GetAll();
         void NewBid(int auctionId, int newBid);
+
+        void AddAuction(Auction auction);
     }
 }

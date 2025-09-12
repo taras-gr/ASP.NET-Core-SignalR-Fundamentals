@@ -1,11 +1,18 @@
+using Microsoft.AspNetCore.SignalR;
 using ps_globomantics_signalr.Hubs;
+using ps_globomantics_signalr.Models;
 using ps_globomantics_signalr.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
-builder.Services.AddSignalR(o => o.EnableDetailedErrors = true);
+builder.Services.AddSignalR(o =>
+{
+    o.EnableDetailedErrors = builder.Environment.IsProduction();
+    o.StatefulReconnectBufferSize = 100;
+}).AddMessagePackProtocol();
+
 builder.Services.AddSingleton<IAuctionRepo, AuctionMemoryRepo>();
 
 var app = builder.Build();
@@ -29,11 +36,14 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
-app.MapPost("auction/{auctionId}/newbid", (int auctionId, int currentBid, IAuctionRepo auctionRepo) =>
+app.MapPost("auction", async (Auction auction, IAuctionRepo auctionRepo,
+    IHubContext<AuctionHub> hubContext) =>
 {
-    auctionRepo.NewBid(auctionId, currentBid);
+    auctionRepo.AddAuction(auction);
+    await hubContext.Clients.All.SendAsync("ReceiveNewAuction", 
+        auction);
 });
 
-app.MapHub<AuctionHub>("/auctionhub");
+app.MapHub<AuctionHub>("/auctionhub", o => o.AllowStatefulReconnects = true);
 
 app.Run();

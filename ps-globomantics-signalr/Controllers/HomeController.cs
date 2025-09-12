@@ -20,6 +20,13 @@ namespace ps_globomantics_signalr.Controllers
             return View(auctions);
         }
 
+        [HttpGet("auctions")]
+        public IActionResult GetAll()
+        {
+            var auctions = _AuctionRepo.GetAll();
+            return Ok(auctions);
+        }
+
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {

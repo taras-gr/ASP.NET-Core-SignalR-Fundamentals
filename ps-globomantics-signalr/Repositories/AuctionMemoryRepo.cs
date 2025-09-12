@@ -15,6 +15,11 @@ namespace ps_globomantics_signalr.Repositories
             auctions.Add(new Auction { Id = 5, ItemName = "Creative pencil set", CurrentBid = 3 });
         }
 
+        public void AddAuction(Auction auction)
+        {
+            auctions.Add(auction);
+        }
+
         public IEnumerable<Auction> GetAll()
         {
             return auctions;
